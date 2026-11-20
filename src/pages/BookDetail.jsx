@@ -1,4 +1,5 @@
 import Button from "../components/common/Button";
+import BookCover from "../components/common/BookCover";
 
 function BookDetail({ book, onBack, onEdit, onDelete }) {
   if (!book) {
@@ -9,16 +10,12 @@ function BookDetail({ book, onBack, onEdit, onDelete }) {
     <div className="book-detail">
       <div className="page-header">
         <h2>도서 상세 정보</h2>
-        <Button onClick={onBack}>목록으로</Button>
+        <Button variant="secondary" onClick={onBack}>목록으로</Button>
       </div>
 
       <div className="detail-container">
         <div className="detail-cover">
-          {book.coverImageUrl ? (
-            <img src={book.coverImageUrl} alt={book.title} />
-          ) : (
-            <span>📚 표지 이미지 없음</span>
-          )}
+          <BookCover book={book} />
         </div>
 
         <div className="detail-info">
@@ -35,7 +32,7 @@ function BookDetail({ book, onBack, onEdit, onDelete }) {
 
           <div className="detail-actions">
             <Button onClick={onEdit}>수정</Button>
-            <Button onClick={onDelete}>삭제</Button>
+            <Button variant="danger" onClick={onDelete}>삭제</Button>
           </div>
         </div>
       </div>

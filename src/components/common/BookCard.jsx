@@ -1,32 +1,16 @@
+import BookCover from "./BookCover";
+
 function BookCard({ book, onClick }) {
   return (
-    <div
-      className="book-card"
-      onClick={onClick}
-      role="button"
-      tabIndex={0}
-      onKeyDown={(e) => {
-        if (e.key === "Enter" || e.key === " ") {
-          e.preventDefault();
-          onClick?.();
-        }
-      }}
-      style={{ cursor: "pointer" }}
-    >
-      <div className="book-cover">
-        {book.coverImageUrl ? (
-          <img src={book.coverImageUrl} alt={book.title} />
-        ) : (
-          <span>📚 표지 없음</span>
-        )}
-      </div>
-
-      <div className="book-info">
+    <aside className="book-preview" aria-label="선택한 도서 미리보기">
+      <div className="preview-art"><BookCover book={book} /></div>
+      <div className="preview-copy">
         <h3>{book.title}</h3>
-        <p>저자: {book.author}</p>
+        <p className="preview-author">{book.author}</p>
+        {book.content && <p className="preview-excerpt">{book.content}</p>}
+        <button type="button" className="detail-link" onClick={onClick}>상세 정보 보기 <span aria-hidden="true">↗</span></button>
       </div>
-    </div>
+    </aside>
   );
 }
-
 export default BookCard;

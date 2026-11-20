@@ -4,20 +4,23 @@ import MainLayout from "./components/layout/MainLayout";
 import BookCreate from "./pages/BookCreate";
 import BookDetail from "./pages/BookDetail";
 import BookEdit from "./pages/BookEdit";
-import BookCard from "./components/common/BookCard";
-import Button from "./components/common/Button";
+import BookCatalog from "./pages/BookCatalog";
 import "./App.css";
+import "./book-pages.css";
 
 function App() {
   const [page, setPage] = useState("list");
   const [books, setBooks] = useState([]);
   const [selectedBook, setSelectedBook] = useState(null);
+  const [listStatus, setListStatus] = useState("loading");
+  const [listRequest, setListRequest] = useState(0);
 
   // DB에서 도서 목록 불러오기
   useEffect(() => {
+    const controller = new AbortController();
     const fetchBooks = async () => {
       try {
-        const response = await fetch("http://localhost:3000/books");
+        const response = await fetch("http://localhost:3000/books", { signal: controller.signal });
 
         if (!response.ok) {
           throw new Error("도서 목록을 불러오지 못했습니다.");
@@ -25,13 +28,17 @@ function App() {
 
         const data = await response.json();
         setBooks(data);
+        setListStatus("ready");
       } catch (error) {
+        if (controller.signal.aborted) return;
+        setListStatus("error");
         console.error("도서 목록 조회 오류:", error);
       }
     };
 
     fetchBooks();
-  }, []);
+    return () => controller.abort();
+  }, [listRequest]);
 
   // 도서 카드 클릭
   const handleBookClick = (book) => {
@@ -61,27 +68,15 @@ function App() {
       onNavigate={setPage}
       currentPage={page}
     >
-      {page === "list" && (
-        <>
-          <div className="page-header">
-            <h2>도서 목록</h2>
-
-            <Button onClick={() => setPage("create")}>
-              + 도서 등록
-            </Button>
-          </div>
-
-          <div className="book-grid">
-            {books.map((book) => (
-              <BookCard
-                key={book.id}
-                book={book}
-                onClick={() => handleBookClick(book)}
-              />
-            ))}
-          </div>
-        </>
-      )}
+      <div hidden={page !== "list"}>
+        <BookCatalog books={books} status={listStatus} onOpen={handleBookClick}
+          onCreate={() => setPage("create")}
+          onRetry={() => {
+            setListStatus("loading");
+            setListRequest(request => request + 1);
+          }}
+        />
+      </div>
 
       {page === "create" && (
         <BookCreate />
