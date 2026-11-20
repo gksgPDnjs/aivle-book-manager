@@ -2,7 +2,6 @@ import { useState } from "react";
 import BookCard from "../components/common/BookCard";
 import BookCover from "../components/common/BookCover";
 
-const coverFilters = ["전체", "표지 있음", "표지 없음"];
 const dateFormat = new Intl.DateTimeFormat("ko-KR", { year: "numeric", month: "2-digit", day: "2-digit" });
 
 function BookCatalog({ books, status, onRetry, onOpen, onCreate }) {
@@ -10,6 +9,12 @@ function BookCatalog({ books, status, onRetry, onOpen, onCreate }) {
   const [filter, setFilter] = useState("전체");
   const [sort, setSort] = useState("latest");
   const [previewId, setPreviewId] = useState(null);
+  const withCoverCount = books.filter(book => book.coverImageUrl).length;
+  const coverFilters = [
+    { label: "전체", count: books.length },
+    { label: "표지 있음", count: withCoverCount },
+    { label: "표지 없음", count: books.length - withCoverCount },
+  ];
   const term = query.trim().toLocaleLowerCase();
   const visible = books.filter(book => {
     const matchesCover = filter === "전체" || (filter === "표지 있음") === Boolean(book.coverImageUrl);
@@ -28,9 +33,9 @@ function BookCatalog({ books, status, onRetry, onOpen, onCreate }) {
       <div className="catalog-layout">
         <section className="catalog-panel" aria-label="도서 검색 및 목록">
           <div className="catalog-filters" aria-label="표지 필터" role="group">
-            {coverFilters.map(label => (
+            {coverFilters.map(({ label, count }) => (
               <button type="button" key={label} aria-pressed={filter === label} onClick={() => setFilter(label)}>
-                {label}{label === "전체" && status === "ready" && <span>{books.length}</span>}
+                {label}{status === "ready" && <span>{count}</span>}
               </button>
             ))}
           </div>
