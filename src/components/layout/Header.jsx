@@ -1,23 +1,14 @@
-function Header() {
+function Header({ children }) {
   return (
-    <header className="header">
-      <div className="header-brand">
-        <div className="brand-icon" aria-hidden="true">
-          📚
+    <header className="workspace-header">
+      <div className="workspace-bar">
+        <div className="wordmark">
+          <span className="library-mark" aria-hidden="true"><i /><i /><i /></span>
+          Aivle <strong>Library</strong>
         </div>
-
-        <div className="brand-text">
-          <h1>AI 도서관리시스템</h1>
-          <span>AI Book Manager</span>
-        </div>
-      </div>
-
-      <div className="header-status">
-        <span className="status-dot"></span>
-        도서 관리 서비스
+        {children}
       </div>
     </header>
   );
 }
-
 export default Header;
