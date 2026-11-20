@@ -2,54 +2,66 @@
 import { useState } from "react";
 import "./AICoverGenerator.css";
 
-function AICoverGenerator({ book, onCoverSaved }) {
+function AICoverGenerator({ book, onSelect }) {
 
   // ===== 1. State 정의 =====
   const [userApiKey, setUserApiKey] = useState("");
+  const [selectedModel, setSelectedModel] = useState("gpt-image-2");
+  const [selectedQuality, setSelectedQuality] = useState("low");
+
   const [images, setImages] = useState([]);
   const [selectedImage, setSelectedImage] = useState("");
+
   const [loading, setLoading] = useState(false);
-  const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
   const [message, setMessage] = useState("");
 
-  // ===== 2. OpenAI 이미지 생성 함수 =====
+  // ===== 2. OpenAI 표지 생성 함수 =====
   const handleGenerateCover = async () => {
 
-    // API Key 확인
+    // API Key 입력 확인
     if (!userApiKey.trim()) {
       alert("API Key를 입력해주세요.");
       return;
     }
 
-    // 도서 정보 확인
-    if (!book || !book.title || !book.content) {
-      alert("도서 제목과 내용이 필요합니다.");
+    // 도서 제목 및 내용 확인
+    if (!book || !book.title || !book.title.trim() ||
+        !book.content || !book.content.trim()) {
+      alert("도서 제목과 내용을 먼저 입력해주세요.");
       return;
     }
 
-    // 생성 시작
+    // 생성 상태 초기화
     setLoading(true);
     setError("");
     setMessage("");
     setImages([]);
     setSelectedImage("");
 
+    // 기존 선택 정보 초기화
+    if (onSelect) {
+      onSelect("");
+    }
+
     try {
-      // 도서 정보로 프롬프트 작성
+
+      // 도서 정보를 활용한 프롬프트
       const prompt = `
-        Create a beautiful book cover illustration.
+        Create a professional book cover design.
 
-        Title: ${book.title}
-        Author: ${book.author}
-        Content: ${book.content}
+        Book title: ${book.title}
+        Author: ${book.author || ""}
+        Book content: ${book.content}
 
-        Reflect the emotion, atmosphere, and
-        main theme of this story.
-        Professional book cover design.
+        Reflect the emotions, atmosphere,
+        and main theme of the story.
+
+        Create an artistic, visually appealing
+        portrait-oriented book cover.
       `;
 
-      // OpenAI 이미지 생성 요청
+      // OpenAI 이미지 생성 API 요청
       const res = await fetch(
         "https://api.openai.com/v1/images/generations",
         {
@@ -59,41 +71,45 @@ function AICoverGenerator({ book, onCoverSaved }) {
             Authorization: `Bearer ${userApiKey}`
           },
           body: JSON.stringify({
-            model: "gpt-image-2",
+            model: selectedModel,
             prompt: prompt,
             n: 3,
             size: "1024x1536",
-            quality: "low",
+            quality: selectedQuality,
             output_format: "png"
           })
         }
       );
 
-      // 응답 상태 확인
+      // API 오류 확인
       if (!res.ok) {
+
         if (res.status === 401) {
           throw new Error("API Key를 확인해주세요.");
         }
 
         if (res.status === 429) {
           throw new Error(
-            "요청 제한 또는 사용량 문제가 발생했습니다."
+            "API 요청 제한 또는 사용량 문제가 발생했습니다."
           );
         }
 
-        throw new Error("이미지 생성 요청에 실패했습니다.");
+        throw new Error(
+          `이미지 생성 요청 실패 (${res.status})`
+        );
       }
 
       // 응답 JSON 변환
       const data = await res.json();
 
-      // 이미지 데이터 확인
+      // 이미지 응답 개수 확인
       if (!data.data || data.data.length !== 3) {
         throw new Error("이미지 3장을 받지 못했습니다.");
       }
 
       // Base64 데이터를 Data URL로 변환
       const generatedImages = data.data.map((item) => {
+
         if (!item.b64_json) {
           throw new Error("이미지 데이터가 없습니다.");
         }
@@ -101,8 +117,9 @@ function AICoverGenerator({ book, onCoverSaved }) {
         return `data:image/png;base64,${item.b64_json}`;
       });
 
-      // 이미지 3장 저장
+      // 생성된 이미지 3장 저장
       setImages(generatedImages);
+      setMessage("표지 이미지 3장이 생성되었습니다.");
 
     } catch (err) {
       setError(err.message);
@@ -111,83 +128,82 @@ function AICoverGenerator({ book, onCoverSaved }) {
     }
   };
 
-  // ===== 3. 선택한 이미지 DB 저장 =====
-  const handleSaveCover = async () => {
+  // ===== 3. 표지 이미지 선택 함수 =====
+  const handleSelectCover = (image) => {
 
-    if (!selectedImage) {
-      alert("표지를 선택해주세요.");
-      return;
+    // 선택한 이미지 State에 저장
+    setSelectedImage(image);
+
+    // 부모 컴포넌트에 전달
+    if (onSelect) {
+      onSelect(image);
     }
 
-    if (!book || book.id == null) {
-      alert("저장할 도서 정보가 없습니다.");
-      return;
-    }
-
-    setSaving(true);
-    setError("");
-
-    try {
-      // json-server PATCH 요청
-      const res = await fetch(
-        `http://localhost:3000/books/${book.id}`,
-        {
-          method: "PATCH",
-          headers: {
-            "Content-Type": "application/json"
-          },
-          body: JSON.stringify({
-            coverImageUrl: selectedImage
-          })
-        }
-      );
-
-      if (!res.ok) {
-        throw new Error("표지 저장에 실패했습니다.");
-      }
-
-      const updatedBook = await res.json();
-
-      // 부모 컴포넌트에 수정된 도서 전달
-      if (onCoverSaved) {
-        onCoverSaved(updatedBook);
-      }
-
-      setMessage("선택한 표지가 저장되었습니다.");
-
-    } catch (err) {
-      setError(err.message);
-    } finally {
-      setSaving(false);
-    }
+    setMessage("최종 표지가 선택되었습니다.");
   };
 
   // ===== 4. 화면 구성 =====
   return (
     <div className="ai-cover-generator">
 
-      <h2>AI 도서표지 생성</h2>
-
-      <p>
-        도서의 내용을 바탕으로
-        AI가 어울리는 표지를 생성합니다.
-      </p>
-
       {/* API Key 입력 */}
       <div className="ai-cover-input">
+        <label htmlFor="ai-api-key">
+          OpenAI API Key
+        </label>
+
         <input
+          id="ai-api-key"
           type="password"
-          placeholder="OpenAI API Key 입력"
+          placeholder="API Key를 입력해주세요"
           value={userApiKey}
           onChange={(e) => setUserApiKey(e.target.value)}
         />
       </div>
 
-      {/* 이미지 생성 버튼 */}
+      {/* 이미지 생성 옵션 */}
+      <div className="ai-cover-options">
+
+        <div className="ai-cover-option">
+          <label htmlFor="ai-model">이미지 모델</label>
+
+          <select
+            id="ai-model"
+            value={selectedModel}
+            onChange={(e) => setSelectedModel(e.target.value)}
+          >
+            <option value="gpt-image-2">
+              GPT Image 2
+            </option>
+
+            <option value="gpt-image-1">
+              GPT Image 1
+            </option>
+          </select>
+        </div>
+
+        <div className="ai-cover-option">
+          <label htmlFor="ai-quality">이미지 품질</label>
+
+          <select
+            id="ai-quality"
+            value={selectedQuality}
+            onChange={(e) => setSelectedQuality(e.target.value)}
+          >
+            <option value="low">Low</option>
+            <option value="medium">Medium</option>
+            <option value="high">High</option>
+          </select>
+        </div>
+
+      </div>
+
+      {/* AI 이미지 생성 버튼 */}
       <button
         type="button"
+        className="ai-cover-generate-btn"
         onClick={handleGenerateCover}
-        disabled={loading || saving}
+        disabled={loading}
       >
         {loading ? "이미지 생성 중..." : "AI 표지 3장 생성"}
       </button>
@@ -196,48 +212,79 @@ function AICoverGenerator({ book, onCoverSaved }) {
         이미지 생성 시 API 사용 비용이 발생할 수 있습니다.
       </p>
 
-      {/* 오류 표시 */}
-      {error && <p className="ai-cover-error">{error}</p>}
-
-      {/* 생성된 이미지 목록 */}
-      <div className="ai-cover-list">
-        {images.map((image, index) => (
-          <div
-            className="ai-cover-item"
-            key={index}
-          >
-            <img
-              src={image}
-              alt={`AI 표지 ${index + 1}`}
-            />
-
-            <button
-              type="button"
-              onClick={() => setSelectedImage(image)}
-              disabled={saving}
-            >
-              {selectedImage === image
-                ? "선택됨"
-                : `표지 ${index + 1} 선택`}
-            </button>
-          </div>
-        ))}
-      </div>
-
-      {/* 선택한 이미지 저장 */}
-      {selectedImage && (
-        <button
-          type="button"
-          onClick={handleSaveCover}
-          disabled={saving || loading}
-        >
-          {saving ? "저장 중..." : "선택한 표지 저장"}
-        </button>
+      {/* 에러 메시지 */}
+      {error && (
+        <p className="ai-cover-error">{error}</p>
       )}
 
-      {/* 저장 결과 */}
+      {/* 생성된 이미지 미리보기 */}
+      <div className="ai-cover-list">
+
+        {[0, 1, 2].map((index) => {
+
+          const image = images[index];
+
+          return (
+            <div
+              className="ai-cover-item"
+              key={index}
+            >
+
+              {/* 표지 미리보기 */}
+              <div
+                className={
+                  selectedImage && selectedImage === image
+                    ? "ai-cover-image ai-cover-selected"
+                    : "ai-cover-image"
+                }
+              >
+                {image ? (
+                  <img
+                    src={image}
+                    alt={`AI 표지 ${index + 1}`}
+                  />
+                ) : (
+                  <span>표지 {index + 1}</span>
+                )}
+              </div>
+
+              {/* 각 이미지 선택 버튼 */}
+              <button
+                type="button"
+                className="ai-cover-select-btn"
+                disabled={!image || loading}
+                onClick={() => handleSelectCover(image)}
+              >
+                {image && selectedImage === image
+                  ? "선택됨"
+                  : "선택"}
+              </button>
+
+            </div>
+          );
+        })}
+
+      </div>
+
+      {/* 결과 메시지 */}
       {message && (
         <p className="ai-cover-success">{message}</p>
+      )}
+
+      {/* 최종 선택 이미지 미리보기 */}
+      {selectedImage && (
+        <div className="ai-cover-final">
+
+          <h4>최종 선택한 표지</h4>
+
+          <img
+            src={selectedImage}
+            alt="최종 선택된 도서표지"
+          />
+
+          <p>도서 등록 시 해당 이미지가 적용됩니다.</p>
+
+        </div>
       )}
 
     </div>
