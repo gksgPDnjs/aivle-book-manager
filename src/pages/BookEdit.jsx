@@ -1,12 +1,14 @@
 
 import { useState } from "react";
 import Button from "../components/common/Button";
+import AICoverGenerator from "../components/cover/AICoverGenerator";
 
 function BookEdit({ book, onBack, onSave }) {
   const [title, setTitle] = useState(book?.title || "");
   const [author, setAuthor] = useState(book?.author || "");
   const [content, setContent] = useState(book?.content || "");
   const [saving, setSaving] = useState(false);
+  const [newCoverImageUrl, setNewCoverImageUrl] = useState(null);
 
   if (!book) {
     return <p>수정할 도서 정보가 없습니다.</p>;
@@ -25,6 +27,7 @@ function BookEdit({ book, onBack, onSave }) {
         title: title.trim(),
         author: author.trim(),
         content: content.trim(),
+        coverImageUrl: newCoverImageUrl ?? book.coverImageUrl ?? "",
       });
     } catch (error) {
       console.error(error);
@@ -67,6 +70,16 @@ function BookEdit({ book, onBack, onSave }) {
               </div>
             )}
           </div>
+
+          <h3 className="section-title">AI 표지 다시 생성</h3>
+          <p className="section-description">
+            새로운 표지를 선택하지 않으면 기존 표지가 유지됩니다.
+          </p>
+          <AICoverGenerator
+            book={{ title, author, content }}
+            onSelect={(image) => setNewCoverImageUrl(image || null)}
+            actionLabel="도서 수정"
+          />
         </section>
 
         {/* 오른쪽: 도서 정보 수정 */}

@@ -2,7 +2,7 @@
 import { useState } from "react";
 import "./AICoverGenerator.css";
 
-function AICoverGenerator({ book, onSelect }) {
+function AICoverGenerator({ book, onSelect, actionLabel = "도서 등록" }) {
 
   // ===== 1. State 정의 =====
   const [userApiKey, setUserApiKey] = useState("");
@@ -282,7 +282,7 @@ function AICoverGenerator({ book, onSelect }) {
             alt="최종 선택된 도서표지"
           />
 
-          <p>도서 등록 시 해당 이미지가 적용됩니다.</p>
+          <p>{actionLabel} 시 해당 이미지가 적용됩니다.</p>
 
         </div>
       )}
