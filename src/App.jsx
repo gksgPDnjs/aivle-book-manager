@@ -91,6 +91,7 @@ function App() {
           title: updatedBook.title,
           author: updatedBook.author,
           content: updatedBook.content,
+          coverImageUrl: updatedBook.coverImageUrl,
           updatedAt: new Date().toISOString(),
         }),
       });
