@@ -1,95 +1,318 @@
-.app {
-  min-height: 100vh;
+
+/* =========================================
+   1. 공통 디자인 설정
+========================================= */
+
+:root {
+  --primary: #2563eb;
+  --primary-hover: #1d4ed8;
+  --primary-light: #eff6ff;
+  --border: #e2e8f0;
+  --text-main: #1e293b;
+  --text-muted: #64748b;
+  --background: #f8fafc;
+  --white: #ffffff;
 }
 
-header {
-  height: 70px;
-  padding: 20px 30px;
-  background-color: white;
-  border-bottom: 1px solid #e2e8f0;
+* {
+  box-sizing: border-box;
+}
+
+/* =========================================
+   2. 전체 레이아웃
+========================================= */
+
+.app {
+  min-height: 100vh;
+  background: var(--background);
 }
 
 .layout {
   display: flex;
-  min-height: calc(100vh - 70px);
+  min-height: calc(100vh - 76px);
 }
 
-aside {
+/* =========================================
+   3. Header
+========================================= */
+
+.header {
+  height: 76px;
+  padding: 0 32px;
+  background: var(--white);
+  border-bottom: 1px solid var(--border);
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+.header-brand {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.brand-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  background: var(--primary-light);
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+}
+
+.brand-text h1 {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 700;
+  line-height: 1.3;
+  color: var(--text-main);
+}
+
+.brand-text span {
+  display: block;
+  margin-top: 3px;
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+.header-status {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  color: var(--text-muted);
+}
+
+.status-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #22c55e;
+}
+
+/* =========================================
+   4. Sidebar
+========================================= */
+
+.sidebar {
   width: 240px;
-  padding: 24px;
-  background-color: white;
-  border-right: 1px solid #e2e8f0;
+  flex-shrink: 0;
+  padding: 28px 16px;
+  background: var(--white);
+  border-right: 1px solid var(--border);
+
+  display: flex;
+  flex-direction: column;
 }
 
-main {
+.sidebar-title {
+  padding: 0 14px;
+  margin-bottom: 18px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  color: #94a3b8;
+}
+
+.sidebar-menu {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.sidebar-menu li {
+  padding: 0;
+}
+
+.sidebar-link {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+
+  padding: 14px 16px;
+  margin-bottom: 6px;
+
+  border: none;
+  border-radius: 10px;
+  background: transparent;
+
+  color: #475569;
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 500;
+  text-align: left;
+
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+}
+
+.sidebar-link:hover {
+  background: #f1f5f9;
+  color: var(--primary);
+}
+
+.sidebar-link.active {
+  background: var(--primary-light);
+  color: var(--primary);
+  font-weight: 700;
+}
+
+.sidebar-link:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+}
+
+.sidebar-icon {
+  font-size: 18px;
+}
+
+.sidebar-footer {
+  margin-top: auto;
+  padding: 20px 14px 0;
+  border-top: 1px solid var(--border);
+  font-size: 12px;
+  color: #94a3b8;
+}
+
+/* =========================================
+   5. 본문 및 페이지 제목
+========================================= */
+
+.main-content {
   flex: 1;
   min-width: 0;
-  padding: 32px;
+  padding: 36px 40px;
 }
 
-nav ul {
-  list-style: none;
+.page-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin-bottom: 28px;
 }
 
-nav li {
-  padding: 12px;
-  cursor: pointer;
+.page-header h2 {
+  margin: 0;
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--text-main);
 }
+
+/* =========================================
+   6. 공통 버튼
+========================================= */
 
 .btn {
-  padding: 10px 20px;
-  border: none;
-  border-radius: 8px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+
+  padding: 12px 20px;
+  border: 1px solid transparent;
+  border-radius: 10px;
+
+  font-family: inherit;
   font-size: 14px;
   font-weight: 600;
+  line-height: 1.4;
+
   cursor: pointer;
-}
-
-.btn-primary {
-  background-color: #2563eb;
-  color: white;
-}
-
-.btn-secondary {
-  background-color: #e2e8f0;
-  color: #1e293b;
-}
-
-.btn-danger {
-  background-color: #dc2626;
-  color: white;
+  transition: background 0.2s, transform 0.2s;
 }
 
 .btn:hover {
-  opacity: 0.85;
+  transform: translateY(-1px);
 }
+
+.btn:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+}
+
+.btn-primary {
+  background: var(--primary);
+  color: #ffffff;
+}
+
+.btn-primary:hover {
+  background: var(--primary-hover);
+}
+
+.btn-secondary {
+  background: #e2e8f0;
+  color: #334155;
+}
+
+.btn-secondary:hover {
+  background: #cbd5e1;
+}
+
+.btn-danger {
+  background: #ef4444;
+  color: #ffffff;
+}
+
+.btn-danger:hover {
+  background: #dc2626;
+}
+
+/* =========================================
+   7. 도서 목록 및 카드
+========================================= */
 
 .book-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  grid-template-columns: repeat(
+    auto-fill,
+    minmax(220px, 1fr)
+  );
   gap: 24px;
-  margin-top: 24px;
 }
 
 .book-card {
-  background-color: white;
-  border: 1px solid #e2e8f0;
-  border-radius: 12px;
+  width: 100%;
+  max-width: 300px;
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: 16px;
   overflow: hidden;
-  transition: transform 0.2s;
+
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
 }
 
 .book-card:hover {
   transform: translateY(-4px);
+  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.08);
+}
+
+.book-card:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 3px;
 }
 
 .book-cover {
-  height: 240px;
-  background-color: #e2e8f0;
+  width: 100%;
+  aspect-ratio: 3 / 4;
+  background: #e2e8f0;
+
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #64748b;
+  overflow: hidden;
+
+  color: var(--text-muted);
+  font-size: 14px;
 }
 
 .book-cover img {
@@ -99,106 +322,139 @@ nav li {
 }
 
 .book-info {
-  padding: 16px;
+  padding: 20px;
 }
 
 .book-info h3 {
-  font-size: 16px;
-  margin-bottom: 8px;
+  margin: 0 0 10px;
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--text-main);
 }
 
 .book-info p {
+  margin: 0;
   font-size: 14px;
-  color: #64748b;
+  color: var(--text-muted);
 }
 
-/* 도서 등록 페이지 */
-.book-create {
-  max-width: 900px;
-  margin: 0 auto;
-}
+/* =========================================
+   8. 도서 등록 및 수정 폼
+========================================= */
 
 .form-container {
-  margin-top: 24px;
+  width: 100%;
+  max-width: 760px;
   padding: 32px;
-  background-color: white;
-  border: 1px solid #e2e8f0;
-  border-radius: 12px;
+
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: 16px;
 }
 
 .form-group {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 10px;
   margin-bottom: 24px;
 }
 
 .form-group label {
   font-size: 14px;
   font-weight: 600;
-  color: #334155;
+  color: var(--text-main);
 }
 
 .form-group input,
 .form-group textarea {
   width: 100%;
-  padding: 12px 14px;
+  padding: 13px 14px;
+
   border: 1px solid #cbd5e1;
-  border-radius: 8px;
-  font-size: 14px;
+  border-radius: 10px;
+  background: var(--white);
+
   font-family: inherit;
-  outline: none;
+  font-size: 14px;
+  color: var(--text-main);
 }
 
 .form-group input:focus,
 .form-group textarea:focus {
-  border-color: #2563eb;
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px var(--primary-light);
+}
+
+.form-group textarea {
+  min-height: 140px;
+  resize: vertical;
 }
 
 .cover-preview {
-  height: 200px;
-  background-color: #f1f5f9;
-  border: 2px dashed #cbd5e1;
-  border-radius: 8px;
+  min-height: 240px;
+  padding: 24px;
+
   display: flex;
-  justify-content: center;
   align-items: center;
-  color: #64748b;
+  justify-content: center;
+
+  background: #f1f5f9;
+  border: 2px dashed #cbd5e1;
+  border-radius: 12px;
+
+  color: var(--text-muted);
+  font-size: 14px;
+  text-align: center;
+}
+
+.cover-preview img {
+  display: block;
+  max-width: 100%;
+  max-height: 320px;
+  object-fit: contain;
 }
 
 .form-actions {
   display: flex;
   justify-content: flex-end;
+  flex-wrap: wrap;
   gap: 12px;
+  margin-top: 28px;
 }
 
-/* 도서 상세 페이지 */
+/* =========================================
+   9. 도서 상세 페이지 공통 스타일
+========================================= */
+
 .book-detail {
-  max-width: 1100px;
-  margin: 0 auto;
+  width: 100%;
 }
 
 .detail-container {
   display: flex;
-  gap: 40px;
-  margin-top: 24px;
+  align-items: flex-start;
+  gap: 32px;
+
   padding: 32px;
-  background: white;
-  border: 1px solid #e2e8f0;
-  border-radius: 12px;
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: 16px;
 }
 
 .detail-cover {
   width: 240px;
-  height: 320px;
   flex-shrink: 0;
-  background: #f1f5f9;
-  border-radius: 8px;
+  aspect-ratio: 3 / 4;
+
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #64748b;
   overflow: hidden;
+
+  background: #e2e8f0;
+  border-radius: 12px;
+  color: var(--text-muted);
 }
 
 .detail-cover img {
@@ -209,38 +465,279 @@ nav li {
 
 .detail-info {
   flex: 1;
-}
-
-.detail-info h2 {
-  margin-bottom: 20px;
-}
-
-.detail-description {
-  margin-top: 32px;
-  line-height: 1.8;
+  min-width: 0;
 }
 
 .detail-actions {
   display: flex;
+  flex-wrap: wrap;
   gap: 12px;
-  margin-top: 40px;
+  margin-top: 24px;
 }
 
-@media (max-width: 700px) {
-  .detail-container {
-    flex-direction: column;
+/* =========================================
+   10. 태블릿 반응형
+========================================= */
+
+@media (max-width: 1024px) {
+  .sidebar {
+    width: 200px;
+  }
+
+  .main-content {
+    padding: 28px 24px;
+  }
+
+  .book-grid {
+    gap: 16px;
   }
 }
 
-/* 도서 수정 페이지 */
-.book-edit {
-  max-width: 900px;
-  margin: 0 auto;
+/* =========================================
+   11. 모바일 반응형
+========================================= */
+
+@media (max-width: 700px) {
+  .header {
+    height: 64px;
+    padding: 0 16px;
+  }
+
+  .brand-icon {
+    width: 38px;
+    height: 38px;
+  }
+
+  .brand-text h1 {
+    font-size: 16px;
+  }
+
+  .brand-text span,
+  .header-status {
+    display: none;
+  }
+
+  .layout {
+    flex-direction: column;
+    min-height: calc(100vh - 64px);
+  }
+
+  .sidebar {
+    width: 100%;
+    padding: 12px 16px;
+
+    border-right: none;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .sidebar-title,
+  .sidebar-footer {
+    display: none;
+  }
+
+  .sidebar-menu {
+    display: flex;
+    gap: 8px;
+  }
+
+  .sidebar-menu li {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .sidebar-link {
+    justify-content: center;
+    padding: 12px 8px;
+    margin-bottom: 0;
+    font-size: 13px;
+  }
+
+  .main-content {
+    padding: 24px 16px;
+  }
+
+  .page-header h2 {
+    font-size: 20px;
+  }
+
+  .book-grid {
+    grid-template-columns: repeat(
+      auto-fill,
+      minmax(150px, 1fr)
+    );
+    gap: 12px;
+  }
+
+  .book-info {
+    padding: 14px;
+  }
+
+  .book-info h3 {
+    font-size: 16px;
+  }
+
+  .form-container {
+    padding: 20px;
+  }
+
+  .detail-container {
+    flex-direction: column;
+    padding: 20px;
+    gap: 24px;
+  }
+
+  .detail-cover {
+    width: 100%;
+    max-width: 240px;
+    margin: 0 auto;
+  }
+
+  .form-actions,
+  .detail-actions {
+    flex-wrap: wrap;
+  }
 }
 
-.edit-cover-image {
-  max-width: 100%;
-  max-height: 100%;
+
+/* =========================================
+   도서 등록 페이지 - 2단 레이아웃
+========================================= */
+
+.book-create {
+  width: 100%;
+}
+
+.book-create-container {
+  display: grid;
+
+  /* 왼쪽 AI 표지 : 오른쪽 도서 정보 = 1 : 1.4 */
+  grid-template-columns: minmax(300px, 1fr) minmax(0, 1.4fr);
+
+  gap: 24px;
+  width: 100%;
+  max-width: 1200px;
+}
+
+/* 왼쪽 AI 표지 / 오른쪽 도서 정보 공통 */
+.book-create-info,
+.book-create-cover {
+  min-width: 0;
+  padding: 32px;
+
+  background: #ffffff;
+  border: 1px solid var(--border);
+  border-radius: 16px;
+}
+
+.section-title {
+  margin: 0 0 8px;
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--text-main);
+}
+
+.section-description {
+  margin: 0 0 28px;
+  font-size: 13px;
+  line-height: 1.6;
+  color: var(--text-muted);
+}
+
+/* 왼쪽 AI 표지 영역 */
+.book-create-cover .cover-preview {
+  min-height: 400px;
+  padding: 24px;
+  background: #f1f5f9;
+  border: 2px dashed #cbd5e1;
+  border-radius: 12px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.cover-placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  text-align: center;
+}
+
+.cover-placeholder-icon {
+  font-size: 44px;
+}
+
+.cover-placeholder p {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 600;
+  color: #475569;
+}
+
+.cover-placeholder > span:last-child {
+  font-size: 12px;
+  line-height: 1.6;
+  color: #94a3b8;
+}
+
+/* 하단 버튼 영역 */
+.book-create-actions {
+  grid-column: 1 / -1;
+
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+}
+
+/* 태블릿 및 모바일 */
+@media (max-width: 1000px) {
+  .book-create-container {
+    grid-template-columns: 1fr;
+  }
+
+  .book-create-cover .cover-preview {
+    min-height: 300px;
+  }
+}
+
+@media (max-width: 700px) {
+  .book-create-container {
+    gap: 16px;
+  }
+
+  .book-create-info,
+  .book-create-cover {
+    padding: 20px;
+  }
+
+  .book-create-cover .cover-preview {
+    min-height: 260px;
+  }
+
+  .book-create-actions {
+    flex-wrap: wrap;
+  }
+}
+
+
+/* =========================================
+   도서 수정 페이지 - 표지 이미지
+========================================= */
+
+.book-edit {
+  width: 100%;
+}
+
+.book-edit .cover-preview {
+  overflow: hidden;
+}
+
+.book-edit .edit-cover-image {
+  display: block;
+  width: 100%;
+  max-width: 320px;
+  max-height: 400px;
   object-fit: contain;
   border-radius: 8px;
 }

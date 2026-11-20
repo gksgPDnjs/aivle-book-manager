@@ -2,9 +2,9 @@
   "books": [
     {
       "id": 1,
-      "title": "별빛 아래의 서점",
+      "title": "test1",
       "author": "홍길동",
-      "content": "작은 서점에서 벌어지는 이야기",
+      "content": "test, test, test",
       "coverImageUrl": "",
       "createdAt": "2026-11-20T09:00:00.000Z",
       "updatedAt": "2026-11-20T09:00:00.000Z"

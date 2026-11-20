@@ -57,8 +57,10 @@ function App() {
   };
 
   return (
-    <MainLayout onNavigate={setPage}>
-
+    <MainLayout
+      onNavigate={setPage}
+      currentPage={page}
+    >
       {page === "list" && (
         <>
           <div className="page-header">
@@ -90,7 +92,9 @@ function App() {
           book={selectedBook}
           onBack={() => setPage("list")}
           onEdit={handleEdit}
-          onDelete={() => alert("삭제 기능은 추후 연결됩니다.")}
+          onDelete={() =>
+            alert("삭제 기능은 추후 연결됩니다.")
+          }
         />
       )}
 
@@ -101,7 +105,6 @@ function App() {
           onSave={handleSave}
         />
       )}
-
     </MainLayout>
   );
 }
