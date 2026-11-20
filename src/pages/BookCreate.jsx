@@ -3,15 +3,14 @@ import { useState } from "react";
 import Button from "../components/common/Button";
 import AICoverGenerator from "../components/cover/AICoverGenerator";
 
-function BookCreate() {
+function BookCreate({ onCreate }) {
 
-  // ===== 1. State 정의 =====
   const [title, setTitle] = useState("");
   const [author, setAuthor] = useState("");
   const [content, setContent] = useState("");
   const [coverImageUrl, setCoverImageUrl] = useState("");
+  const [saving, setSaving] = useState(false);
 
-  // ===== 2. 입력값 초기화 =====
   const handleReset = () => {
     setTitle("");
     setAuthor("");
@@ -19,7 +18,27 @@ function BookCreate() {
     setCoverImageUrl("");
   };
 
-  // ===== 3. 화면 구성 =====
+  const handleCreate = async () => {
+    if (!title.trim() || !author.trim() || !content.trim()) {
+      alert("제목, 저자, 내용을 모두 입력해 주세요.");
+      return;
+    }
+
+    setSaving(true);
+    try {
+      await onCreate({
+        title: title.trim(),
+        author: author.trim(),
+        content: content.trim(),
+        coverImageUrl,
+      });
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setSaving(false);
+    }
+  };
+
   return (
     <div className="book-create">
 
@@ -102,12 +121,8 @@ function BookCreate() {
             초기화
           </Button>
 
-          <Button
-            onClick={() =>
-              alert("도서 저장 기능은 추후 연결됩니다.")
-            }
-          >
-            도서 등록
+          <Button onClick={handleCreate} disabled={saving}>
+            {saving ? "등록 중..." : "도서 등록"}
           </Button>
 
         </div>

@@ -6,19 +6,31 @@ function BookEdit({ book, onBack, onSave }) {
   const [title, setTitle] = useState(book?.title || "");
   const [author, setAuthor] = useState(book?.author || "");
   const [content, setContent] = useState(book?.content || "");
+  const [saving, setSaving] = useState(false);
 
   if (!book) {
     return <p>수정할 도서 정보가 없습니다.</p>;
   }
 
-  // 수정 완료
-  const handleSave = () => {
-    onSave({
-      ...book,
-      title,
-      author,
-      content,
-    });
+  const handleSave = async () => {
+    if (!title.trim() || !author.trim() || !content.trim()) {
+      alert("제목, 저자, 내용을 모두 입력해 주세요.");
+      return;
+    }
+
+    setSaving(true);
+    try {
+      await onSave({
+        ...book,
+        title: title.trim(),
+        author: author.trim(),
+        content: content.trim(),
+      });
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setSaving(false);
+    }
   };
 
   return (
@@ -104,8 +116,8 @@ function BookEdit({ book, onBack, onSave }) {
             취소
           </Button>
 
-          <Button onClick={handleSave}>
-            수정 완료
+          <Button onClick={handleSave} disabled={saving}>
+            {saving ? "저장 중..." : "수정 완료"}
           </Button>
         </div>
 
