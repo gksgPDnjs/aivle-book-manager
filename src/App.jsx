@@ -1,4 +1,5 @@
-import { useState } from "react";
+
+import { useState, useEffect } from "react";
 import MainLayout from "./components/layout/MainLayout";
 import BookCreate from "./pages/BookCreate";
 import BookDetail from "./pages/BookDetail";
@@ -7,34 +8,30 @@ import BookCard from "./components/common/BookCard";
 import Button from "./components/common/Button";
 import "./App.css";
 
-const initialBooks = [
-  {
-    id: 1,
-    title: "test1",
-    author: "홍길동",
-    content: "test, test, test",
-    coverImageUrl: "",
-  },
-  {
-    id: 2,
-    title: "test2",
-    author: "김철수",
-    content: "test, test, test",
-    coverImageUrl: "",
-  },
-  {
-    id: 3,
-    title: "test3",
-    author: "이영희",
-    content: "test, test, test",
-    coverImageUrl: "",
-  },
-];
-
 function App() {
   const [page, setPage] = useState("list");
-  const [books, setBooks] = useState(initialBooks);
+  const [books, setBooks] = useState([]);
   const [selectedBook, setSelectedBook] = useState(null);
+
+  // DB에서 도서 목록 불러오기
+  useEffect(() => {
+    const fetchBooks = async () => {
+      try {
+        const response = await fetch("http://localhost:3000/books");
+
+        if (!response.ok) {
+          throw new Error("도서 목록을 불러오지 못했습니다.");
+        }
+
+        const data = await response.json();
+        setBooks(data);
+      } catch (error) {
+        console.error("도서 목록 조회 오류:", error);
+      }
+    };
+
+    fetchBooks();
+  }, []);
 
   // 도서 카드 클릭
   const handleBookClick = (book) => {
