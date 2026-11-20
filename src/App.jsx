@@ -8,6 +8,8 @@ import BookCatalog from "./pages/BookCatalog";
 import "./App.css";
 import "./book-pages.css";
 
+const API_URL = "http://localhost:3000/books";
+
 function App() {
   const [page, setPage] = useState("list");
   const [books, setBooks] = useState([]);
@@ -15,12 +17,11 @@ function App() {
   const [listStatus, setListStatus] = useState("loading");
   const [listRequest, setListRequest] = useState(0);
 
-  // DB에서 도서 목록 불러오기
   useEffect(() => {
     const controller = new AbortController();
     const fetchBooks = async () => {
       try {
-        const response = await fetch("http://localhost:3000/books", { signal: controller.signal });
+        const response = await fetch(API_URL, { signal: controller.signal });
 
         if (!response.ok) {
           throw new Error("도서 목록을 불러오지 못했습니다.");
@@ -40,27 +41,94 @@ function App() {
     return () => controller.abort();
   }, [listRequest]);
 
-  // 도서 카드 클릭
-  const handleBookClick = (book) => {
-    setSelectedBook(book);
-    setPage("detail");
+  const handleBookClick = async (book) => {
+    try {
+      const response = await fetch(`${API_URL}/${book.id}`);
+      if (!response.ok) throw new Error("도서 상세 조회 실패");
+      const data = await response.json();
+      setSelectedBook(data);
+      setPage("detail");
+    } catch (error) {
+      console.error(error);
+      alert("도서 상세 정보를 불러오지 못했습니다.");
+    }
   };
 
-  // 수정 페이지 이동
   const handleEdit = () => {
     setPage("edit");
   };
 
-  // 수정 완료
-  const handleSave = (updatedBook) => {
-    setBooks((prevBooks) =>
-      prevBooks.map((book) =>
-        book.id === updatedBook.id ? updatedBook : book
-      )
-    );
+  const handleCreate = async (newBook) => {
+    try {
+      const now = new Date().toISOString();
+      const response = await fetch(API_URL, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          ...newBook,
+          createdAt: now,
+          updatedAt: now,
+        }),
+      });
+      if (!response.ok) throw new Error("도서 등록 실패");
+      const savedBook = await response.json();
+      setBooks((prevBooks) => [...prevBooks, savedBook]);
+      setPage("list");
+      alert("도서가 등록되었습니다.");
+    } catch (error) {
+      console.error(error);
+      alert("도서 등록에 실패했습니다.");
+      throw error;
+    }
+  };
 
-    setSelectedBook(updatedBook);
-    setPage("detail");
+  const handleSave = async (updatedBook) => {
+    try {
+      const response = await fetch(`${API_URL}/${updatedBook.id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          title: updatedBook.title,
+          author: updatedBook.author,
+          content: updatedBook.content,
+          updatedAt: new Date().toISOString(),
+        }),
+      });
+      if (!response.ok) throw new Error("도서 수정 실패");
+      const savedBook = await response.json();
+      setBooks((prevBooks) =>
+        prevBooks.map((book) =>
+          book.id === savedBook.id ? savedBook : book
+        )
+      );
+      setSelectedBook(savedBook);
+      setPage("detail");
+      alert("도서가 수정되었습니다.");
+    } catch (error) {
+      console.error(error);
+      alert("도서 수정에 실패했습니다.");
+      throw error;
+    }
+  };
+
+  const handleDelete = async () => {
+    if (!selectedBook) return;
+    if (!window.confirm("이 도서를 삭제하시겠습니까?")) return;
+    try {
+      const response = await fetch(`${API_URL}/${selectedBook.id}`, {
+        method: "DELETE",
+      });
+      if (!response.ok) throw new Error("도서 삭제 실패");
+      setBooks((prevBooks) =>
+        prevBooks.filter((book) => book.id !== selectedBook.id)
+      );
+      setSelectedBook(null);
+      setPage("list");
+      alert("도서가 삭제되었습니다.");
+    } catch (error) {
+      console.error(error);
+      alert("도서 삭제에 실패했습니다.");
+    }
   };
 
   return (
@@ -79,7 +147,7 @@ function App() {
       </div>
 
       {page === "create" && (
-        <BookCreate />
+        <BookCreate onCreate={handleCreate} />
       )}
 
       {page === "detail" && (
@@ -87,9 +155,7 @@ function App() {
           book={selectedBook}
           onBack={() => setPage("list")}
           onEdit={handleEdit}
-          onDelete={() =>
-            alert("삭제 기능은 추후 연결됩니다.")
-          }
+          onDelete={handleDelete}
         />
       )}
 
