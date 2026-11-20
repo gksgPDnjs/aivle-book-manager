@@ -120,31 +120,45 @@ cd aivle-book-manager
 
 ### 5.3 패키지 설치
 
+프로젝트에 필요한 패키지를 설치합니다.
+
 ```bash
 npm install
 ```
 
-### 5.4 json-server 설치 및 실행
-
-미니프로젝트 교안에서 안내한 전역 설치 방식입니다.
+본 프로젝트는 다음 패키지를 사용합니다.
 
 ```bash
-npm install -g json-server
+npm install json-server@0.17.4 express@4
 ```
 
-프로젝트 루트에 `db.json` 파일이 있는지 확인한 후 다음 명령어를 실행합니다.
+- `json-server@0.17.4`: 도서 데이터 관리 및 REST API 제공
+- `express@4`: AI 표지 이미지 저장을 위한 요청 데이터 크기 제한 설정
+
+필요한 패키지는 `package.json`에 등록되어 있으므로 `npm install` 명령어로 함께 설치됩니다.
+
+### 5.4 json-server 실행
+
+본 프로젝트는 AI 이미지의 Base64 데이터를 저장하기 위해 기존 json-server의 요청 크기 제한을 확장한 `server.cjs` 파일을 사용합니다.
+
+기존 json-server 실행 명령어 대신 아래 명령어를 실행합니다.
 
 **터미널 1**
 
 ```bash
-json-server --watch db.json --port 3000
+node server.cjs
 ```
 
-실행 주소:
+- 서버 주소: http://localhost:3000
+- 도서 데이터 API: http://localhost:3000/books
+- 데이터 저장 파일: `db.json`
+- 요청 데이터 크기 제한: 20MB
 
-http://localhost:3000/books
+※ `server.cjs`에서 Express의 JSON 요청 크기 제한을 설정하였으며, 기존 `json-server --watch db.json --port 3000` 명령어로 실행하면 해당 설정이 적용되지 않습니다.
 
 ### 5.5 React 개발 서버 실행
+
+별도의 터미널에서 React 개발 서버를 실행합니다.
 
 **터미널 2**
 
@@ -152,11 +166,9 @@ http://localhost:3000/books
 npm run dev
 ```
 
-실행 주소:
+웹페이지 주소: http://localhost:5173
 
-http://localhost:5173
-
-※ React와 json-server는 각각 별도의 터미널에서 실행합니다.
+※ React와 json-server는 각각 별도의 터미널에서 실행해야 합니다.
 
 ## 6. 데이터 구조 설계
 
