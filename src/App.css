@@ -111,3 +111,136 @@ nav li {
   font-size: 14px;
   color: #64748b;
 }
+
+/* 도서 등록 페이지 */
+.book-create {
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.form-container {
+  margin-top: 24px;
+  padding: 32px;
+  background-color: white;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 24px;
+}
+
+.form-group label {
+  font-size: 14px;
+  font-weight: 600;
+  color: #334155;
+}
+
+.form-group input,
+.form-group textarea {
+  width: 100%;
+  padding: 12px 14px;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  font-size: 14px;
+  font-family: inherit;
+  outline: none;
+}
+
+.form-group input:focus,
+.form-group textarea:focus {
+  border-color: #2563eb;
+}
+
+.cover-preview {
+  height: 200px;
+  background-color: #f1f5f9;
+  border: 2px dashed #cbd5e1;
+  border-radius: 8px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: #64748b;
+}
+
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+}
+
+/* 도서 상세 페이지 */
+.book-detail {
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+.detail-container {
+  display: flex;
+  gap: 40px;
+  margin-top: 24px;
+  padding: 32px;
+  background: white;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+}
+
+.detail-cover {
+  width: 240px;
+  height: 320px;
+  flex-shrink: 0;
+  background: #f1f5f9;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #64748b;
+  overflow: hidden;
+}
+
+.detail-cover img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.detail-info {
+  flex: 1;
+}
+
+.detail-info h2 {
+  margin-bottom: 20px;
+}
+
+.detail-description {
+  margin-top: 32px;
+  line-height: 1.8;
+}
+
+.detail-actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 40px;
+}
+
+@media (max-width: 700px) {
+  .detail-container {
+    flex-direction: column;
+  }
+}
+
+/* 도서 수정 페이지 */
+.book-edit {
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.edit-cover-image {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+  border-radius: 8px;
+}

@@ -1,6 +1,18 @@
-function BookCard({ book }) {
+function BookCard({ book, onClick }) {
   return (
-    <div className="book-card">
+    <div
+      className="book-card"
+      onClick={onClick}
+      role="button"
+      tabIndex={0}
+      onKeyDown={(e) => {
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault();
+          onClick?.();
+        }
+      }}
+      style={{ cursor: "pointer" }}
+    >
       <div className="book-cover">
         {book.coverImageUrl ? (
           <img src={book.coverImageUrl} alt={book.title} />
